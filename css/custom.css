@@ -1,0 +1,7 @@
+.price::before{
+  content: "\0024";
+}
+
+body {
+  padding-top: 56px;
+}

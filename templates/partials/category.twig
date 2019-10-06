@@ -1,0 +1,35 @@
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lobster">
+
+<style>
+    .col-lg-3 {
+        border-style: groove;
+        background-color: pink;
+        text-align: center;
+    }
+
+    .my-4 {
+        font-family: "Lobster", serif;
+        color: brown;
+
+    }
+</style>
+<div class="col-lg-3 ">
+    <nav class="nav flex-column nav-pills ">
+        <h1 class="my-4">Gadget Mother</h1>
+        <div class="list-group">
+            {% if not categories.active %}
+                {% set all_active = 'active' %}
+            {% else %}
+                {% set all_active = '' %}
+            {% endif %}
+            <a href="index.php" class="nav-link {{all_active}}">All Categories</a>
+            {% for category in categories.items %}
+                {% set active = ( category.category_id == categories.active ) ? 'active' : '' %}
+                <a href="index.php?category_id={{category.category_id}}" class="nav-link text-capitalize {{active}}">
+                    {{category.category_name}}
+                </a>
+            {% endfor %}
+        </div>
+    </nav>
+</div>
