@@ -17,6 +17,14 @@ else{
   $register = '';
 }
 
+use aitsydney\WishList;
+$wish_list = new WishList();
+$wish_total = $wish_list -> getWishListTotal();
+
+use aitsydney\ShoppingCart;
+$cart = new ShoppingCart();
+$cart_total = $cart -> getCartTotal();
+
 // create navigation
 use aitsydney\Navigation;
 
@@ -33,6 +41,8 @@ $template = $twig -> load('register.twig');
 
 //pass values to twig
 echo $template -> render([
+    'wish_count' => $wish_total,
+    'cart_count' => $cart_total,
     'navigation' => $nav_items,
     'title' => 'Register for an account',
     'response' => $register

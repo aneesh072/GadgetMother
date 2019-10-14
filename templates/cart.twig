@@ -3,35 +3,49 @@
     {% include 'partials/head.twig' %}
     <body >
     {% include 'partials/navigation.twig' %}
-        <main class="container-fluid" style="padding-top:30px;">
-            {% if wish_items | length > 0 %}
+        <main class="container" style="padding-top:30px;">
+            {% if cart_items | length > 0 %}
               <div class="row">
-                <div class="col">
+                <div class="col-12">
                   <h4>
-                    Your cart contains {{ wish_items | length }} items
+                    Your cart contains {{ cart_items | length }} items
                   </h4>
                 </div>
               </div>
-              {% for item in wish_items %}
+              <form method="get">
+              {% for item in cart_items %}
                 <div class="row my-2 mb-4 py-2 border-bottom border-primary">
-                  <div class="col-md-3">
+                  <div class="col-md-4">                  
+                    <a href="detail.php?product_id={{item.product_id}}" class="stretched-link" ></a>
                     <img class="img-fluid" src="images/products/{{item.image}}">
                   </div>
-                  <div class="col-md-4">
-                    <h4>{{item.name}}</h4>
-                    <p>{{item.description | slice(0,80) ~ '...' }}</p>
-                    <a href="detail.php?product_id={{item.product_id}}">Detail</a>
+                  <div class="col-md-6">
+                    <h4 class="text-capitalize">{{item.name}}</h4>
+                    <h5 class="price">{{item.price}}</h5>
+                    <p>{{item.description | slice(0,120) ~ '...' }}</p>
+                    <div class="form-row">
+                      <div class="col-md-4">
+                        <input class="form-control" type="number" name="quantity[]" value="{{item.quantity}}" min="1">
+                      </div>
+                      <div class="col-md-8">
+                        <button class="btn btn-primary" type="submit" name="update" value="{{item.product_id}}">Update</button>
+                      </div>
+                    </div>
+                    
                   </div>
-                  <div class="col-md-5">
-                    <form class="form-inline" method="get">
-                      <input type="hidden" name="product_id" value="{{item.product_id}}">
-                      <button class="btn btn-primary" type="submit" name="action" value="delete">Delete</button>
-                    </form>
+                  <div class="col-md-2 d-flex justify-content-end align-items-start">
+                  {# use array symbol in product_id so it is treated as an array #}
+                    <input type="hidden" name="cart_id" value="{{item.cart_id}}">
+                    <input type="hidden" name="product_id[]" value="{{item.product_id}}">
+                    <button class="btn btn-primary" type="submit" name="action" value="delete">&times;</button>
                   </div>
                 </div>
               {% endfor %}
+              {# keep cart_id outside of the loop, but still within form so it is not repeated (duplicated) #}
+                
+              </form>
             {% else %}
-              <h4>No items. Start adding to your cart? <?h4>
+              <h4>No items. Start adding to your cart? </h4>
             {% endif %}
         </main>
     </body>

@@ -1,7 +1,9 @@
 .price::before{
   content: "\0024";
 }
-
-body {
-  padding-top: 56px;
+.categories a{
+  text-transform: capitalize;
+}
+.product-name{
+  text-transform: capitalize;
 }

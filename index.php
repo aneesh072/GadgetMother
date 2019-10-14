@@ -5,6 +5,10 @@ use aitsydney\WishList;
 $wish_list = new WishList();
 $wish_total = $wish_list -> getWishListTotal();
 
+use aitsydney\ShoppingCart;
+$cart = new ShoppingCart();
+$cart_total = $cart -> getCartTotal();
+
 use aitsydney\Navigation;
 
 $nav = new Navigation();
@@ -33,6 +37,7 @@ $template = $twig -> load('home.twig');
 //pass values to twig
 echo $template -> render([
     'wish_count' => $wish_total,
+    'cart_count' => $cart_total,
     'categories' => $categories,
     'navigation' => $nav_items,
     'products' => $products_result,

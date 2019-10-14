@@ -1,13 +1,7 @@
 <?php
 require('vendor/autoload.php');
 
-//get user's wishlist total
-use aitsydney\WishList;
-
-$wish = new WishList();
-$wish_total = $wish -> getWishListTotal();
-
-// create account
+// create account class
 use aitsydney\Account;
 if( $_SERVER['REQUEST_METHOD']=='POST' ){
   $email = $_POST['email'];
@@ -16,11 +10,19 @@ if( $_SERVER['REQUEST_METHOD']=='POST' ){
   //create an instance of account class
   $acc = new Account();
   $login = $acc -> login( $email, $password );
-  
 }
 else{
   $login='';
 }
+
+use aitsydney\WishList;
+$wish_list = new WishList();
+$wish_total = $wish_list -> getWishListTotal();
+
+use aitsydney\ShoppingCart;
+$cart = new ShoppingCart();
+$cart_total = $cart -> getCartTotal();
+
 
 //create navigation
 use aitsydney\Navigation;
@@ -39,8 +41,9 @@ $template = $twig -> load('login.twig');
 //output the template and pass the data
 
 echo $template -> render( array(
+    'wish_count' => $wish_total,
+    'cart_count' => $cart_total,
     'login' => $login,
-    'wish' => $wish_total,
     'navigation' => $navigation,
     'title' => 'Login to your account'
 ) );
