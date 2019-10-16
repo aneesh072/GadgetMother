@@ -63,6 +63,7 @@ class ShoppingCart extends Query{
     try{
       // if item is not in the cart
       $adding = $this -> addNewCartItem( $cart_id, $product_id, $quantity );
+      
       // if adding fails, check if it's duplicate error (1062)
       if( $adding['success'] == false && $adding['errors']['error_no'] == '1062' ){
         //get the item in the cart so we know its current quantity
@@ -111,6 +112,7 @@ class ShoppingCart extends Query{
   }
 
   public function getCartItems( $cart_id ){
+    $response = array();
     if( $this -> account_id ){
       //get the items from database
       $get_items_query = "
@@ -121,15 +123,18 @@ class ShoppingCart extends Query{
         product.name,
         product.price,
         product.description,
+        product_quantity.quantity AS available,
         ( SELECT @image_id := product_image.image_id FROM product_image WHERE product_image.product_id = @product_id LIMIT 1 ) AS image_id,
         ( SELECT image_file_name FROM image WHERE image.image_id = @image_id ) AS image
         FROM shopping_cart_item 
         INNER JOIN product
         ON shopping_cart_item.product_id = product.product_id
+        INNER JOIN product_quantity
+        ON product_quantity.product_id = product.product_id
         WHERE cart_id = UNHEX( ? );
       ";
       $cart_result = $this -> run( $get_items_query, array($cart_id) );
-      $items = $cart_result['data'];
+      $response['items'] = $cart_result['data'];
     }
     else{
       if( !isset( $_SESSION['cart']) ){
@@ -145,7 +150,7 @@ class ShoppingCart extends Query{
         product.name,
         product.description,
         product.price,
-        product_quantity.quantity,
+        product_quantity.quantity as available,
         ( SELECT @image_id := product_image.image_id FROM product_image WHERE product_image.product_id = @product_id LIMIT 1 ) AS image_id,
         ( SELECT image_file_name FROM image WHERE image.image_id = @image_id ) AS image
         FROM product
@@ -166,14 +171,22 @@ class ShoppingCart extends Query{
         $query = $query . " WHERE " . $str;
         //run the query
         $cart_result = $this -> run( $query, $product_ids );
-        $items = $cart_result['data'];
+        $response['items'] = $cart_result['data'];
         //add quantity data to each result
-        foreach( $items as $index => $item ){
-          $items[$index]['quantity'] = $quantities[$index];
+        foreach( $response['items'] as $index => $item ){
+          $response['items'][$index]['quantity'] = $quantities[$index];
         }
       }
     }
-    return $items;
+    //add total to the response
+    if( is_array($response['items']) ){
+      $total = 0;
+      foreach( $response['items'] as $item ){
+        $total = $total + ( $item['price'] * $item['quantity'] );
+      }
+      $response['total'] = $total;
+    }
+    return $response;
   }
 
   public function updateCartItem( $cart_id, $product_id, $quantity ){
@@ -293,6 +306,7 @@ class ShoppingCart extends Query{
   }
 
   private function createCart(){
+    
     //if the user is authenticated, store in database
     if( $this -> account_id ){
       $new_cart_query = "
@@ -300,7 +314,7 @@ class ShoppingCart extends Query{
         VALUES ( UNHEX(?) , UNHEX(?) )
       ";
       $cart_id = $this -> createCartId();
-      $new_cart = $this -> run($new_cart_query, array($cart_id, $account_id));
+      $new_cart = $this -> run($new_cart_query, array($cart_id, $this -> account_id));
     }
     else{
       $cart_id = $this -> createCartId();

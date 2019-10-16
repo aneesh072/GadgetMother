@@ -1,14 +1,11 @@
 <?php
 namespace aitsydney;
-
 use aitsydney\Database;
-
 class Navigation extends Database{
     public $isAuthenticated = false;
     private $min_level = 0;
     private $max_level = 1;
     public $navigation = array();
-
     public function __construct(){
         parent::__construct();
         $this -> initSession();
@@ -23,7 +20,6 @@ class Navigation extends Database{
             session_start();
         }
     }
-
     public function getNavigation(){
         $nav_query = "
             SELECT 
@@ -59,5 +55,4 @@ class Navigation extends Database{
         }
     }
 }
-
 ?>

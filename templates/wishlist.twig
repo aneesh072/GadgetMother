@@ -1,8 +1,9 @@
 <!doctype html>
 <html lang="en">
     {% include 'partials/head.twig' %}
-    <body >
+    <body class="set" >
     {% include 'partials/navigation.twig' %}
+    <div class="coloro">
         <main class="container" style="padding-top:30px;">
             {% if wish_items | length > 0 %}
               <div class="row">
@@ -35,5 +36,17 @@
               <h4>No items. Start adding to your wishlist? <?h4>
             {% endif %}
         </main>
+        </div>
     </body>
 </html>
+    <style>
+        .set {
+            background-color: gray;
+        }
+
+        .coloro
+        {
+          background-color: white;
+          padding-top: 10px;
+        }
+    </style>

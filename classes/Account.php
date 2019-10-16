@@ -1,28 +1,21 @@
 <?php
 namespace aitsydney;
-
 use aitsydney\Database;
 use \Exception;
-
 class Account extends Database{
-
   public function __construct(){
     parent::__construct();
   }
-
   public function register( $email, $password ){
     $query = "
       INSERT INTO account ( account_id, email, password, created, accessed, updated )
       VALUES ( UNHEX(?), ?, ?, NOW(), NOW(), NOW() )
     ";
-
     $register_errors = array();
     $response = array();
-
     if( strlen($password) < 8 ){
       $register_errors['password'] = "minimum 8 characters";
     }
-
     if( filter_var($email, FILTER_VALIDATE_EMAIL ) == false ){
       $register_errors['email'] = "email address not valid";
     }
@@ -63,7 +56,6 @@ class Account extends Database{
     }
     return $register_response;
   }
-
   public function createAccountId(){
     if( function_exists('random_bytes') ){
       $bytes = random_bytes(16);
@@ -73,21 +65,18 @@ class Account extends Database{
     }
     return bin2hex($bytes);
   }
-
   private function setUserSession( $account_id ){
     if( session_status() == PHP_SESSION_NONE ){
       session_start();
     }
     $_SESSION['auth'] = $account_id;
   }
-
   public function logout(){
     if( session_status() == PHP_SESSION_NONE ){
       session_start();
     }
     unset( $_SESSION['auth'] );
   }
-
   public function login( $email, $password ){
     $response = array();
     $errors = array();
